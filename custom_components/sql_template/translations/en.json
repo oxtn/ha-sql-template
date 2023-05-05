@@ -45,7 +45,7 @@
                 },
                 "data_description": {
                     "column": "Column for returned query to present as state",
-                    "db_url": "Database URL, leave empty to use default HA database",
+                    "db_url": "Database URL, leave empty to use HA recorder database",
                     "name": "Name that will be used for Config Entry and also the Sensor",
                     "query": "Query to run, needs to start with 'SELECT'",
                     "unit_of_measurement": "Unit of Measure (optional)",

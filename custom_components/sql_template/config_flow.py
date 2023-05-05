@@ -16,6 +16,7 @@ from homeassistant.const import CONF_NAME, CONF_UNIT_OF_MEASUREMENT, CONF_VALUE_
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
+from homeassistant.helpers.template import Template
 
 from .const import CONF_COLUMN_NAME, CONF_QUERY, DOMAIN
 
@@ -26,7 +27,8 @@ DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_NAME, default="Select SQL Query"): selector.TextSelector(),
         vol.Optional(CONF_DB_URL): selector.TextSelector(),
         vol.Required(CONF_COLUMN_NAME): selector.TextSelector(),
-        vol.Required(CONF_QUERY): selector.TemplateSelector(),
+        # Currently vol.Required throws 'Error: Selector not supported in initial form data' on the front end ??
+        vol.Optional(CONF_QUERY): selector.TemplateSelector(),
         vol.Optional(CONF_UNIT_OF_MEASUREMENT): selector.TextSelector(),
         vol.Optional(CONF_VALUE_TEMPLATE): selector.TemplateSelector(),
     }
@@ -36,7 +38,7 @@ DATA_SCHEMA = vol.Schema(
 def validate_sql_select(value: str) -> str | None:
     """Validate that value is a SQL SELECT query."""
     if not value.lstrip().lower().startswith("select"):
-        raise ValueError("Incorrect Query")
+        raise ValueError("Only SELECT queries allowed")
     return value
 
 

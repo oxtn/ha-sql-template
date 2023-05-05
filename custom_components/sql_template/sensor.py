@@ -80,10 +80,13 @@ async def async_setup_entry(
 
     db_url: str = entry.options[CONF_DB_URL]
     name: str = entry.options[CONF_NAME]
-    query_str: str = entry.options[CONF_QUERY]
+    query: str = entry.options[CONF_QUERY]
     unit: str | None = entry.options.get(CONF_UNIT_OF_MEASUREMENT)
     template: str | None = entry.options.get(CONF_VALUE_TEMPLATE)
     column_name: str = entry.options[CONF_COLUMN_NAME]
+
+    query_template: Template = Template(query)
+    query_template.hass = hass
 
     value_template: Template | None = None
     if template is not None:
@@ -98,7 +101,7 @@ async def async_setup_entry(
     await async_setup_sensor(
         hass,
         name,
-        query_str,
+        query_template,
         column_name,
         unit,
         value_template,
