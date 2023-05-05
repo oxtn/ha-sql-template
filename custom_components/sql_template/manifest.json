@@ -1,0 +1,10 @@
+{
+  "domain": "sql_template",
+  "name": "SQL Template",
+  "codeowners": ["@oxtn"],
+  "config_flow": true,
+  "dependencies": ["recorder"],
+  "documentation": "https://www.home-assistant.io/integrations/sql_template",
+  "iot_class": "local_polling",
+  "requirements": ["sqlalchemy==2.0.4"]
+}
