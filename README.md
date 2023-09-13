@@ -16,3 +16,21 @@ This integration builds on the functionality provided by the [SQL integration](h
 [![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/)
 
 <img src="https://raw.githubusercontent.com/oxtn/ha-sql-template/main/images/config_flow.png">
+
+## Troubleshooting
+
+* SQL Query invalid
+    * This error occurs during integration setup during the following 2 scenarios:
+        * You've entered a query that does not begin with the string `SELECT` (this value *cannot* be within a template string value)
+        * Your query is invalid in someway and could not be executed.  Check your `home-assistant.log` for details on the specific error that was encountered.
+
+## Debug Logging
+
+To enable debug logging to see query details during sensor refreshes, ensure the following section is added to your `configuration.yaml` (or if the section already exists, merge in the line for this component):
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.sql_template: debug
+```

@@ -13,7 +13,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.recorder import CONF_DB_URL, DEFAULT_DB_FILE, DEFAULT_URL
 from homeassistant.const import CONF_NAME, CONF_UNIT_OF_MEASUREMENT, CONF_VALUE_TEMPLATE
-from homeassistant.core import callback
+from homeassistant.core import callback, HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 from homeassistant.helpers.template import Template
@@ -42,24 +42,29 @@ def validate_sql_select(value: str) -> str | None:
     return value
 
 
-def validate_query(db_url: str, query: str, column: str) -> bool:
+def validate_query(hass: HomeAssistant, db_url: str, query: str, column: str) -> bool:
     """Validate SQL query."""
 
     engine = sqlalchemy.create_engine(db_url, future=True)
     sessmaker = scoped_session(sessionmaker(bind=engine, future=True))
     sess: Session = sessmaker()
 
+    query_template: Template = Template(query)
+    query_template.hass = hass
+
     try:
-        result: Result = sess.execute(sqlalchemy.text(query))
+        query_text = query_template.render(parse_result=False)
+        _LOGGER.debug(f"Validating query: {query_text}")
+        result: Result = sess.execute(sqlalchemy.text(query_text))
     except SQLAlchemyError as error:
-        _LOGGER.debug("Execution error %s", error)
+        _LOGGER.error(f"Execution error {error}")
         if sess:
             sess.close()
         raise ValueError(error) from error
 
     for res in result.mappings():
         data = res[column]
-        _LOGGER.debug("Return value from query: %s", data)
+        _LOGGER.debug(f"Return value from query: {data}")
 
     if sess:
         sess.close()
@@ -100,7 +105,7 @@ class SQLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 validate_sql_select(query)
                 await self.hass.async_add_executor_job(
-                    validate_query, db_url, query, column
+                    validate_query, self.hass, db_url, query, column
                 )
             except SQLAlchemyError:
                 errors["db_url"] = "db_url_invalid"
@@ -153,7 +158,7 @@ class SQLOptionsFlowHandler(config_entries.OptionsFlow):
             try:
                 validate_sql_select(query)
                 await self.hass.async_add_executor_job(
-                    validate_query, db_url, query, column
+                    validate_query, self.hass, db_url, query, column
                 )
             except SQLAlchemyError:
                 errors["db_url"] = "db_url_invalid"
