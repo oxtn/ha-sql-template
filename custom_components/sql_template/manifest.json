@@ -6,6 +6,6 @@
   "dependencies": ["recorder"],
   "documentation": "https://www.home-assistant.io/integrations/sql_template",
   "iot_class": "local_polling",
-  "requirements": ["sqlalchemy==2.0.12"],
-  "version": "1.0.0-beta"
+  "requirements": ["sqlalchemy==2.0.15"],
+  "version": "1.0.0-beta2"
 }
