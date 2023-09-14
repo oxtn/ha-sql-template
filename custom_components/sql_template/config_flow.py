@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session, scoped_session, sessionmaker
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.components.recorder import CONF_DB_URL, DEFAULT_DB_FILE, DEFAULT_URL
+from homeassistant.components.recorder import CONF_DB_URL, get_instance
 from homeassistant.const import CONF_NAME, CONF_UNIT_OF_MEASUREMENT, CONF_VALUE_TEMPLATE
 from homeassistant.core import callback, HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
@@ -90,9 +90,7 @@ class SQLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the user step."""
         errors = {}
-        db_url_default = DEFAULT_URL.format(
-            hass_config_path=self.hass.config.path(DEFAULT_DB_FILE)
-        )
+        db_url_default = get_instance(self.hass).db_url
 
         if user_input is not None:
             db_url = user_input.get(CONF_DB_URL, db_url_default)
@@ -145,9 +143,7 @@ class SQLOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage SQL options."""
         errors = {}
-        db_url_default = DEFAULT_URL.format(
-            hass_config_path=self.hass.config.path(DEFAULT_DB_FILE)
-        )
+        db_url_default = get_instance(self.hass).db_url
 
         if user_input is not None:
             db_url = user_input.get(CONF_DB_URL, db_url_default)

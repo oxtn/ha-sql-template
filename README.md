@@ -19,7 +19,7 @@ This integration builds on the functionality provided by the [SQL integration](h
 
 ## Troubleshooting
 
-* SQL Query invalid
+* `SQL Query invalid` during integration setup
     * This error occurs during integration setup during the following 2 scenarios:
         * You've entered a query that does not begin with the string `SELECT` (this value *cannot* be within a template string value)
         * Your query is invalid in someway and could not be executed.  Check your `home-assistant.log` for details on the specific error that was encountered.
