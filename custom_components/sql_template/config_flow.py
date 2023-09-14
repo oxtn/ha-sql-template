@@ -94,7 +94,6 @@ class SQLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             db_url = user_input.get(CONF_DB_URL, db_url_default)
-            _LOGGER.info(f"Using DBURL {db_url}")
             query = user_input[CONF_QUERY]
             column = user_input[CONF_COLUMN_NAME]
             uom = user_input.get(CONF_UNIT_OF_MEASUREMENT)
